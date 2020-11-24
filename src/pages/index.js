@@ -1,23 +1,24 @@
 import React from "react"
-import { Link } from "gatsby"
 import { graphql } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
+import { PostItem } from "../components/post-item"
 
-const IndexPage = ({ data }) => (
+const IndexPage = ({ data: {allWpPost: {edges : posts}} }) => (
   <Layout>
     <SEO title="Mi Blog"/>
     <h1>Blog de Uriel</h1>
-    <p>Bienvenidos al blog de Uriel, aquí podrán aprender cosas sobre tecnología.</p>
+    <p>Bienvenidos a mi blog personal, aquí podrán aprender cosas sobre tecnología y desarrollo.</p>
     <ul>
       {
-        data.allWpPost.edges.map((post, index) =>
+        posts.map((post, index) =>
           (
-            <li key={index}>
-              <Link to={post.node.slug}>
-                {post.node.title}
-              </Link>
-            </li>
+            <PostItem
+              key={index}
+              image={post.node.featuredImage.node.localFile.childImageSharp.fluid}
+              link={post.node.slug}
+              title={post.node.title}
+            />
           )
         )
       }
@@ -35,6 +36,17 @@ export const query = graphql`
                     title
                     slug
                     content
+                    featuredImage {
+                        node {
+                            localFile {
+                                childImageSharp {
+                                    fluid {
+                                        ...GatsbyImageSharpFluid_tracedSVG
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
